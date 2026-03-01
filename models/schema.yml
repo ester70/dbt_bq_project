@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: dim_products
+    description: "list of products from thelook ecommerce store"
+    columns:
+      - name: product_id
+        description: "the key of the product"
+        tests:
+          - unique    
+          - not_null  
+
+  - name: fct_sales_summary
+    description: "table of facts of orders that were completed"
+    columns:
+      - name: order_item_id
+        tests:
+          - unique
+          - not_null
+      - name: sale_price
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "!= 0"
+          - not_null
