@@ -1,0 +1,10 @@
+# Ignore dbt artifact directories
+target/
+dbt_packages/
+logs/
+
+# Ignore JSON artifacts
+*.json
+
+# Ignore macOS system file
+.DS_Store
