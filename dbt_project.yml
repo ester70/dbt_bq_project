@@ -16,5 +16,9 @@ clean-targets:
 
 models:
   bq_dbt_project:
-    example:
-      +materialized: table 
+    silver:
+      +materialized: table
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold

@@ -1,14 +1,89 @@
 version: 2
 
 models:
+  - name: dim_brands
+    description: "dimension of distinct brands from thelook ecommerce products"
+    columns:
+      - name: brand_id
+        description: "surrogate key for the brand"
+        tests:
+          - unique
+          - not_null
+      - name: brand_name
+        description: "name of the brand"
+        tests:
+          - not_null
+
+  - name: dim_categories
+    description: "dimension of distinct categories and subcategories from thelook ecommerce products"
+    columns:
+      - name: category_id
+        description: "surrogate key for the category"
+        tests:
+          - unique
+          - not_null
+      - name: category_name
+        description: "name of the category"
+        tests:
+          - not_null
+      - name: subcategory_name
+        description: "name of the subcategory"
+        tests:
+          - not_null
+
+  - name: dim_region
+    description: "dimension of distinct regions for dropdowns and sales by region"
+    columns:
+      - name: region_id
+        description: "surrogate key for the region"
+        tests:
+          - unique
+          - not_null
+      - name: region_name
+        description: "region name for display (e.g. in dropdowns)"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_users
+    description: "dimension of users with geographic attributes for sales by region"
+    columns:
+      - name: user_id
+        description: "unique user identifier"
+        tests:
+          - unique
+          - not_null
+      - name: country
+        description: "user country"
+        tests:
+          - not_null
+      - name: state
+        description: "user state"
+      - name: region
+        description: "user region"
+        tests:
+          - not_null
+
   - name: dim_products
     description: "list of products from thelook ecommerce store"
     columns:
       - name: product_id
         description: "the key of the product"
         tests:
-          - unique    
-          - not_null  
+          - unique
+          - not_null
+      - name: brand
+        description: "product brand"
+        tests:
+          - not_null
+      - name: product_category
+        description: "product category"
+        tests:
+          - not_null
+      - name: department
+        description: "product department"
+        tests:
+          - not_null
 
   - name: fct_sales_summary
     description: "table of facts of orders that were completed"
@@ -17,6 +92,38 @@ models:
         tests:
           - unique
           - not_null
+      - name: order_id
+        description: "order identifier"
+        tests:
+          - not_null
+      - name: user_id
+        description: "user who placed the order; join to dim_users for sales by region"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_users')
+              field: user_id
+      - name: created_at
+        description: "when the order item was created"
+        tests:
+          - not_null
+      - name: product_id
+        description: "product; join to dim_products for attributes"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: product_id
+      - name: brand
+        description: "product brand for sales by brand"
+        tests:
+          - not_null
+      - name: department
+        description: "product department for sales by department"
+        tests:
+          - not_null
+      - name: region
+        description: "user region for sales by region and Tableau filter"
       - name: sale_price
         tests:
           - dbt_utils.expression_is_true:
